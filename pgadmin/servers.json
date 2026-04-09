@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Dulari Medical Store",
+      "Group": "Servers",
+      "Host": "dulari_postgres",
+      "Port": 5432,
+      "MaintenanceDB": "dulari_db",
+      "Username": "dulari_user",
+      "SSLMode": "prefer",
+      "PassFile": "/pgpass"
+    }
+  }
+}
