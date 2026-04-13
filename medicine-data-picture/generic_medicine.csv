@@ -1,0 +1,91 @@
+generic_product_id,name,brand,mrp,product_id
+1,Amoxycillin 500mg + Clavulanic Acid 125mg Tablet,GeneriPharma,145.00,1
+2,Azithromycin 500mg Tablet,MedGenix,86.00,2
+3,Ambroxol 30mg + Levosalbutamol 1mg Syrup,GenCore Labs,77.00,3
+4,Fexofenadine 120mg Tablet,PharmaGen,142.00,4
+5,Pheniramine 25mg Tablet,BioGeneric,7.00,5
+6,Montelukast 10mg + Fexofenadine 120mg Tablet,AlphaGen,157.00,6
+7,Amoxycillin 500mg + Clavulanic Acid 125mg Tablet,CostCare Pharma,145.00,7
+8,Azithromycin 500mg Tablet,GenMed,86.00,8
+9,Hydroxyzine 25mg Tablet,GeneriPharma,56.00,9
+10,Phenylephrine 5mg + Chlorpheniramine Maleate 2mg Syrup SF,MedGenix,84.00,10
+11,Ranitidine 150mg Tablet,GenCore Labs,27.00,11
+12,Phenylephrine 5mg + Chlorpheniramine Maleate 2mg Syrup,PharmaGen,84.00,12
+13,Phenylephrine 0.10% + Beclometasone 0.025% Cream,BioGeneric,87.00,13
+14,Amoxycillin 200mg + Clavulanic Acid 28.5mg Oral Suspension,AlphaGen,44.00,14
+15,Ambroxol 15mg + Salbutamol 1mg Syrup,CostCare Pharma,20.00,15
+16,Clonidine 100mcg Tablet,GenMed,47.00,16
+17,Promethazine 25mg Tablet,GeneriPharma,36.00,17
+18,Phenylephrine 5mg + Chlorpheniramine Maleate 2mg Syrup SF,MedGenix,46.00,18
+19,Fexofenadine 180mg Tablet,GenCore Labs,163.00,19
+20,Albendazole 400mg Tablet,PharmaGen,6.00,20
+21,Salbutamol 2mg/5ml Syrup,BioGeneric,12.00,21
+22,Alprazolam 0.25mg Tablet,AlphaGen,19.00,22
+23,Aceclofenac 200mg + Rabeprazole 20mg Capsule SR,CostCare Pharma,83.00,23
+24,Lorazepam 2mg Tablet,GenMed,60.00,24
+25,Ambroxol 15mg + Levosalbutamol 0.5mg Junior Syrup,GeneriPharma,62.00,25
+26,Salbutamol 100mcg Inhaler,MedGenix,103.00,26
+27,Amoxycillin 500mg Capsule,GenCore Labs,52.00,27
+28,Hydroxyzine 10mg Tablet,PharmaGen,31.00,28
+29,Domperidone 10mg + Omeprazole 20mg Tablet,BioGeneric,50.00,29
+30,Spironolactone 25mg Tablet,AlphaGen,23.00,30
+31,Fexofenadine 30mg/5ml Oral Suspension,CostCare Pharma,123.00,31
+32,Hydroxyzine 10mg Syrup,GenMed,72.00,32
+33,Amlodipine 5mg + Atenolol 50mg Tablet,GeneriPharma,29.00,33
+34,Ticagrelor 90mg Tablet,MedGenix,273.00,34
+35,Lorazepam 1mg Tablet,GenCore Labs,49.00,35
+36,Disodium Hydrogen Citrate 1.4gm/5ml Oral Solution,PharmaGen,79.00,36
+37,Aceclofenac 100mg + Paracetamol 325mg Tablet,BioGeneric,72.00,37
+38,Alfuzosin 10mg Tablet PR,AlphaGen,447.00,38
+39,Alprazolam 0.5mg Tablet,CostCare Pharma,43.00,39
+40,Vitamin D3 600000IU Injection,GenMed,265.00,40
+41,Camylofin 25mg + Paracetamol 300mg Tablet,GeneriPharma,81.00,41
+42,Chlorpheniramine Maleate 2mg + Dextromethorphan 5mg Junior Syrup,MedGenix,62.00,42
+43,Azithromycin 200mg/5ml Oral Suspension,GenCore Labs,37.00,43
+44,Acebrophylline 100mg Capsule,PharmaGen,105.00,44
+45,Erythromycin 500mg Tablet,BioGeneric,72.00,45
+46,Amoxycillin 400mg + Clavulanic Acid 57mg Oral Suspension,AlphaGen,112.00,46
+47,Azithromycin 500mg Tablet,CostCare Pharma,52.00,47
+48,Aceclofenac 100mg + Paracetamol 325mg + Serratiopeptidase Tablet,GenMed,78.00,48
+49,Amoxycillin 500mg Capsule,GeneriPharma,21.00,49
+50,Guaifenesin 50mg + Terbutaline 1.25mg Expectorant SF,MedGenix,42.00,50
+51,Adapalene 0.1% + Clindamycin 1% Nano Gel,GenCore Labs,134.00,201
+52,Chlorpheniramine 2mg + Phenylephrine 5mg Flu Syrup,PharmaGen,57.00,202
+53,S-Amlodipine 2.5mg Tablet,BioGeneric,65.00,203
+54,Nitroglycerin 2.5mg Capsule TR,AlphaGen,106.00,204
+55,Guaifenesin + Bromhexine Tablet,CostCare Pharma,18.00,205
+56,Azithromycin 250mg DT Tablet,GenMed,85.00,206
+57,Alprazolam 0.25mg Tablet,GeneriPharma,11.00,207
+58,Amoxycillin 500mg + Clavulanic Acid 125mg Tablet,MedGenix,145.00,208
+59,Sitagliptin 50mg + Metformin 500mg Tablet,GenCore Labs,58.00,209
+60,Methylcobalamin 1500mcg + Pregabalin 75mg Tablet SR,PharmaGen,114.00,210
+61,Ofloxacin 200mg + Flavoxate 200mg Tablet,BioGeneric,88.00,211
+62,Glimepiride 2mg + Metformin 500mg Tablet PR,AlphaGen,146.00,212
+63,Glimepiride 2mg + Metformin 500mg Tablet SR,CostCare Pharma,139.00,213
+64,Glimepiride 1mg + Metformin 500mg Tablet PR,GenMed,101.00,214
+65,Atenolol 25mg Tablet,GeneriPharma,18.00,215
+66,Azithromycin 500mg Tablet,MedGenix,86.00,216
+67,Telmisartan 40mg + Amlodipine 5mg Tablet,GenCore Labs,79.00,217
+68,Ambroxol 30mg/5ml Syrup,PharmaGen,53.00,218
+69,Acotiamide 100mg Tablet,BioGeneric,78.00,219
+70,Atorvastatin 20mg Tablet,AlphaGen,161.00,220
+71,Guaifenesin 50mg + Terbutaline 1.25mg Syrup,CostCare Pharma,55.00,221
+72,Atorvastatin 10mg + Clopidogrel 75mg Capsule,GenMed,193.00,222
+73,Clindamycin 1% Gel,GeneriPharma,57.00,223
+74,Trypsin Chymotrypsin 100000AU Tablet,MedGenix,275.00,33910
+75,Cetirizine 5mg + Paracetamol 325mg Tablet,GenCore Labs,30.00,33911
+76,Ibuprofen 400mg + Paracetamol 325mg Tablet,PharmaGen,30.00,33912
+77,Amoxycillin 500mg + Clavulanic Acid 125mg Tablet,BioGeneric,145.00,33913
+78,Dicyclomine 20mg + Paracetamol 500mg Tablet,AlphaGen,33.00,33914
+79,Cetirizine 10mg Tablet,CostCare Pharma,12.00,33915
+80,Cefuroxime 500mg Tablet,GenMed,308.00,33916
+81,Beclometasone 0.025% + Clotrimazole 1% Cream,GeneriPharma,90.00,33917
+82,Ciprofloxacin 0.3% Eye/Ear Drops,MedGenix,12.00,33918
+83,Cefixime 200mg Tablet,GenCore Labs,78.00,33919
+84,Domperidone 30mg + Rabeprazole 20mg Capsule,PharmaGen,31.00,33920
+85,Cilnidipine 10mg Tablet,BioGeneric,114.00,33921
+86,Sodium Picosulfate 3.33mg + Liquid Paraffin 1.25ml Syrup SF,AlphaGen,176.00,33922
+87,Ciprofloxacin 500mg Tablet,CostCare Pharma,29.00,33923
+88,Paracetamol 500mg Tablet,GenMed,15.00,33924
+89,Caffeine 50mg + Paracetamol 650mg Tablet,GeneriPharma,43.00,33925
+90,Cefixime 50mg/5ml Oral Suspension,MedGenix,31.00,50704

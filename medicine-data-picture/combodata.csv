@@ -1,0 +1,7 @@
+combo_id,combo_name,product1_id,product2_id,tags,combo_price,is_active
+1,Pain Relief Combo,33912,33925,"pain_relief,headache,fever",95.01,TRUE
+2,Cold & Cough Pack,33911,3,"cold,cough,allergy",140.04,TRUE
+3,Antibiotic Duo,1,33919,"antibiotic,infection,bacterial",291.39,TRUE
+4,Allergy Care Pack,4,33915,"allergy,antihistamine,skin_rash",201.70,TRUE
+5,Gastro Relief Pack,33920,33914,"gastro,acidity,stomach_pain",83.47,TRUE
+6,Vitamin D Boost,40,33924,"vitamin_d,immunity,bone_health",365.80,TRUE
