@@ -133,6 +133,7 @@ jobs:
             DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}
             DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}
             ADMIN_RESET_TOKEN=${{ secrets.ADMIN_RESET_TOKEN }}
+            CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}
             EOF
 
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
