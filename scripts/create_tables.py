@@ -24,7 +24,8 @@ CLEAN_MIGRATIONS_SQL = "DELETE FROM django_migrations WHERE app = ANY(%s);"
 
 
 def load_env(env_path: Path) -> dict:
-    env = {}
+    import os
+    env = dict(os.environ)
     if not env_path.exists():
         return env
     with open(env_path) as f:

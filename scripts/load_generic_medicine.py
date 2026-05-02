@@ -43,7 +43,8 @@ FETCH_PRODUCT_MRPS_SQL = "SELECT product_id, mrp FROM products_product;"
 
 
 def load_env(env_path: Path) -> dict:
-    env = {}
+    import os
+    env = dict(os.environ)
     if not env_path.exists():
         return env
     with open(env_path) as f:

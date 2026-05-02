@@ -25,7 +25,8 @@ ON CONFLICT DO NOTHING;
 
 
 def load_env(env_path: Path) -> dict:
-    env = {}
+    import os
+    env = dict(os.environ)
     if not env_path.exists():
         return env
     with open(env_path) as f:
