@@ -42,7 +42,14 @@ class LoginView(APIView):
             tokens = serializer.validated_data["tokens"]
             return Response(
                 {"message": "Login successful.",
-                 "user": {"id": user.id, "name": user.name, "email": user.email, "mobile": user.mobile},
+                 "user": {
+                     "id": user.id,
+                     "name": user.name,
+                     "email": user.email,
+                     "mobile": user.mobile,
+                     "is_staff": user.is_staff,
+                     "is_superuser": user.is_superuser,
+                 },
                  "tokens": tokens},
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

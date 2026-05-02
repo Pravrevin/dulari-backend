@@ -1,0 +1,36 @@
+# Environment files (NEVER commit secrets)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+
+# Virtual env
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Media (uploaded by users)
+media/

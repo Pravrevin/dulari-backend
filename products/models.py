@@ -4,7 +4,7 @@ from django.db import models
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, default="")
-    image = models.ImageField(upload_to="categories/", blank=True, null=True)
+    image = models.ImageField(upload_to="categories/", blank=True, null=True, max_length=255)
     count_of_products = models.IntegerField(default=0)
 
     class Meta:
@@ -38,6 +38,7 @@ class Product(models.Model):
     is_new_launch = models.BooleanField(default=False, help_text="Mark product as a New Launch")
     is_trending_near_you = models.BooleanField(default=False, help_text="Mark product as Trending Near You")
     is_in_spotlight = models.BooleanField(default=False, help_text="Mark product as In the Spotlight")
+    is_approved = models.BooleanField(default=False, help_text="Approved by a super admin from the admin panel")
 
     class Meta:
         db_table = "products_product"
@@ -132,7 +133,7 @@ class Combo(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="products/")
+    image = models.ImageField(upload_to="products/", max_length=255)
     alt_text = models.CharField(max_length=255, blank=True)
 
     class Meta:
@@ -154,7 +155,7 @@ class GenericMedicine(models.Model):
         help_text="Discount % compared to the linked branded product MRP. "
                   "Formula: ((product.mrp - generic.mrp) / product.mrp) * 100",
     )
-    image = models.ImageField(upload_to="generic_medicines/", blank=True, null=True)
+    image = models.ImageField(upload_to="generic_medicines/", blank=True, null=True, max_length=255)
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,

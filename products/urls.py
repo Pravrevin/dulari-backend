@@ -14,6 +14,7 @@ urlpatterns = [
     path("products/trending-near-you/", views.trending_near_you, name="trending-near-you"),
     path("products/in-the-spotlight/", views.in_the_spotlight, name="in-the-spotlight"),
     path("products/<int:product_id>/", views.ProductDetailView.as_view(), name="product-detail"),
+    path("products/<int:product_id>/approve/", views.ProductApproveView.as_view(), name="product-approve"),
     path("products/<int:product_id>/features/", views.ProductFeatureView.as_view(), name="product-features"),
     path("products/<int:product_id>/generic-medicines/", views.GenericMedicineListView.as_view(), name="product-generic-medicines"),
     path("brands/", views.BrandListView.as_view(), name="brand-list"),

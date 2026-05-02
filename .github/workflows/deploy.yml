@@ -1,0 +1,143 @@
+name: Build & Deploy Backend to EC2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/dulari-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.image_tag }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "image_tag=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.image_tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2 over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+            APP_DIR=/home/${{ secrets.EC2_USER }}/dulari-backend
+            mkdir -p "$APP_DIR"
+            cd "$APP_DIR"
+
+            cat > docker-compose.prod.yml <<'COMPOSE'
+            version: "3.9"
+            services:
+              db:
+                image: postgres:16-alpine
+                container_name: dulari_postgres
+                restart: always
+                env_file: [.env]
+                environment:
+                  POSTGRES_DB: ${POSTGRES_DB}
+                  POSTGRES_USER: ${POSTGRES_USER}
+                  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+                volumes:
+                  - postgres_data:/var/lib/postgresql/data
+                networks: [dulari_net]
+
+              backend:
+                image: ${BACKEND_IMAGE}
+                container_name: dulari_backend
+                restart: always
+                env_file: [.env]
+                environment:
+                  POSTGRES_HOST: db
+                  POSTGRES_PORT: 5432
+                command: >
+                  sh -c "python manage.py migrate --noinput &&
+                         python manage.py collectstatic --noinput &&
+                         gunicorn dulari_backend.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+                ports:
+                  - "8000:8000"
+                volumes:
+                  - media_data:/app/media
+                  - static_data:/app/staticfiles
+                depends_on: [db]
+                networks: [dulari_net]
+
+              pgadmin:
+                image: dpage/pgadmin4:latest
+                container_name: dulari_pgadmin
+                restart: always
+                environment:
+                  PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+                  PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+                ports:
+                  - "5050:80"
+                volumes:
+                  - pgadmin_data:/var/lib/pgadmin
+                depends_on: [db]
+                networks: [dulari_net]
+
+            networks:
+              dulari_net:
+                driver: bridge
+            volumes:
+              postgres_data:
+              pgadmin_data:
+              media_data:
+              static_data:
+            COMPOSE
+
+            cat > .env <<'EOF'
+            BACKEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/dulari-backend:${{ needs.build-and-push.outputs.image_tag }}
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_HOST=db
+            POSTGRES_PORT=5432
+            PGADMIN_EMAIL=${{ secrets.PGADMIN_EMAIL }}
+            PGADMIN_PASSWORD=${{ secrets.PGADMIN_PASSWORD }}
+            DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+            DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}
+            DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}
+            ADMIN_RESET_TOKEN=${{ secrets.ADMIN_RESET_TOKEN }}
+            EOF
+
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+            docker compose -f docker-compose.prod.yml --env-file .env pull
+            docker compose -f docker-compose.prod.yml --env-file .env up -d
+            docker image prune -f
+            docker logout

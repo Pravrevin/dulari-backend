@@ -16,6 +16,7 @@ import csv
 import shutil
 import sys
 from pathlib import Path
+from typing import Optional
 
 BACKEND_DIR      = Path(__file__).resolve().parent.parent
 ENV_FILE         = BACKEND_DIR / ".env"
@@ -54,7 +55,7 @@ def load_env(env_path: Path) -> dict:
     return env
 
 
-def find_downloaded_image(generic_product_id: int) -> Path | None:
+def find_downloaded_image(generic_product_id: int) -> Optional[Path]:
     """Return the downloaded image for this generic medicine, or None."""
     folder = IMAGES_SRC / str(generic_product_id)
     if not folder.exists():

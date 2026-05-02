@@ -119,9 +119,9 @@ INSERT_PRODUCT_SQL = """
 INSERT INTO products_product (
     product_id, product_name, mrp, is_discontinued, manufacturer_name,
     pack_size_label, short_composition1, short_composition2, category_id,
-    is_new_launch, is_trending_near_you, is_in_spotlight
+    is_new_launch, is_trending_near_you, is_in_spotlight, is_approved
 )
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 ON CONFLICT (product_id) DO UPDATE SET
     product_name        = EXCLUDED.product_name,
     mrp                 = EXCLUDED.mrp,
@@ -133,7 +133,8 @@ ON CONFLICT (product_id) DO UPDATE SET
     category_id         = EXCLUDED.category_id,
     is_new_launch           = EXCLUDED.is_new_launch,
     is_trending_near_you    = EXCLUDED.is_trending_near_you,
-    is_in_spotlight         = EXCLUDED.is_in_spotlight;
+    is_in_spotlight         = EXCLUDED.is_in_spotlight,
+    is_approved             = EXCLUDED.is_approved;
 """
 
 INSERT_IMAGE_SQL = """
@@ -185,8 +186,9 @@ def parse_bool(value: str) -> bool:
     return value.strip().upper() == "TRUE"
 
 
-def copy_category_image(category_id: int, cursor) -> bool:
-    src_folder = CATEGORY_IMAGES_SRC / str(category_id)
+def copy_category_image(category_id: int, folder_index: int, cursor) -> bool:
+    """folder_index is the 1-based position of the category in CATEGORIES; folders on disk are named 1..N to match."""
+    src_folder = CATEGORY_IMAGES_SRC / str(folder_index)
     if not src_folder.exists():
         return False
     CATEGORY_IMAGES_DEST.mkdir(parents=True, exist_ok=True)
@@ -253,12 +255,12 @@ def main():
     print("Loading categories ...")
     category_map = {}
     category_images_loaded = 0
-    for name, description in CATEGORIES:
+    for idx, (name, description) in enumerate(CATEGORIES, start=1):
         cursor.execute(INSERT_CATEGORY_SQL, (name, description))
         row = cursor.fetchone()
         cat_id, cat_name = row[0], row[1]
         category_map[cat_name] = cat_id
-        if copy_category_image(cat_id, cursor):
+        if copy_category_image(cat_id, idx, cursor):
             category_images_loaded += 1
     print(f"  {len(category_map)} categories ready.")
     print(f"  {category_images_loaded} category images loaded.")
@@ -288,6 +290,7 @@ def main():
                 pid in NEW_LAUNCH_IDS,
                 pid in TRENDING_IDS,
                 pid in SPOTLIGHT_IDS,
+                False,
             ))
             products_loaded += 1
             images_loaded += copy_images(pid, cursor)

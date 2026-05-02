@@ -2,13 +2,25 @@ from django.utils import timezone
 from django.db.models import FloatField, Value
 from django.db.models.functions import Greatest, Coalesce
 from django.contrib.postgres.search import TrigramSimilarity
-from rest_framework import generics, filters
+from rest_framework import generics, filters, status
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, ValidationError
 from .models import Category, Product, DealOfTheDay, SuperSavingDeal, Combo, ProductFeature, GenericMedicine
-from .serializers import CategorySerializer, ProductSerializer, ProductListSerializer, DealOfTheDaySerializer, SuperSavingDealSerializer, ComboSerializer, ProductFeatureSerializer, GenericMedicineSerializer
+from .serializers import (
+    CategorySerializer,
+    ProductSerializer,
+    ProductListSerializer,
+    ProductCreateSerializer,
+    ProductApproveSerializer,
+    DealOfTheDaySerializer,
+    SuperSavingDealSerializer,
+    ComboSerializer,
+    ProductFeatureSerializer,
+    GenericMedicineSerializer,
+)
 
 
 class CategoryListView(generics.ListAPIView):
@@ -17,21 +29,33 @@ class CategoryListView(generics.ListAPIView):
     serializer_class = CategorySerializer
 
 
-class ProductListView(generics.ListAPIView):
+class ProductListView(generics.ListCreateAPIView):
     """
-    GET /api/products/
-    Optional query params:
+    GET /api/products/  — public, paginated catalog.
+    POST /api/products/ — admin-only (is_staff=True). New products start unapproved.
+
+    Optional GET query params:
       ?category_id=<id>
       ?is_new_launch=true
       ?is_trending_near_you=true
       ?is_in_spotlight=true
       ?is_discontinued=false
+      ?is_approved=true | false   (used by the approval admin panel)
       ?search=<name>
     """
-    serializer_class = ProductListSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["product_name", "manufacturer_name", "short_composition1", "short_composition2"]
     ordering_fields = ["product_name", "mrp"]
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return ProductCreateSerializer
+        return ProductListSerializer
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsAdminUser()]
+        return [AllowAny()]
 
     def get_queryset(self):
         queryset = Product.objects.select_related("category").prefetch_related("images")
@@ -41,6 +65,7 @@ class ProductListView(generics.ListAPIView):
         is_trending = self.request.query_params.get("is_trending_near_you")
         is_spotlight = self.request.query_params.get("is_in_spotlight")
         is_discontinued = self.request.query_params.get("is_discontinued")
+        is_approved = self.request.query_params.get("is_approved")
 
         if category_id:
             queryset = queryset.filter(category_id=category_id)
@@ -52,8 +77,37 @@ class ProductListView(generics.ListAPIView):
             queryset = queryset.filter(is_in_spotlight=True)
         if is_discontinued is not None:
             queryset = queryset.filter(is_discontinued=is_discontinued.lower() == "true")
+        if is_approved is not None:
+            queryset = queryset.filter(is_approved=is_approved.lower() == "true")
 
         return queryset
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.save()
+        # Return the full read serializer shape so the frontend can render it directly.
+        read = ProductListSerializer(product, context={"request": request})
+        return Response(read.data, status=status.HTTP_201_CREATED)
+
+
+class ProductApproveView(generics.GenericAPIView):
+    """
+    PATCH /api/products/<product_id>/approve/  — admin-only.
+    Body: { "is_approved": true | false }
+    """
+    permission_classes = [IsAdminUser]
+    serializer_class = ProductApproveSerializer
+    queryset = Product.objects.select_related("category").prefetch_related("images")
+    lookup_field = "product_id"
+
+    def patch(self, request, *args, **kwargs):
+        product = self.get_object()
+        serializer = self.get_serializer(product, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        read = ProductListSerializer(product, context={"request": request})
+        return Response(read.data)
 
 
 class ProductDetailView(generics.RetrieveAPIView):

@@ -33,6 +33,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "is_new_launch",
             "is_trending_near_you",
             "is_in_spotlight",
+            "is_approved",
             "images",
         ]
 
@@ -56,6 +57,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             "is_new_launch",
             "is_trending_near_you",
             "is_in_spotlight",
+            "is_approved",
             "images",
         ]
 
@@ -122,6 +124,48 @@ class GenericMedicineSerializer(serializers.ModelSerializer):
         if obj.image and request:
             return request.build_absolute_uri(obj.image.url)
         return None
+
+
+class ProductCreateSerializer(serializers.ModelSerializer):
+    """Admin-only writer. Auto-assigns product_id (max + 1) and starts unapproved."""
+    category_id = serializers.PrimaryKeyRelatedField(
+        source="category",
+        queryset=Category.objects.all(),
+        required=False,
+        allow_null=True,
+        write_only=True,
+    )
+
+    class Meta:
+        model = Product
+        fields = [
+            "product_id",
+            "product_name",
+            "mrp",
+            "is_discontinued",
+            "manufacturer_name",
+            "pack_size_label",
+            "short_composition1",
+            "short_composition2",
+            "category_id",
+            "is_new_launch",
+            "is_trending_near_you",
+            "is_in_spotlight",
+        ]
+        read_only_fields = ["product_id"]
+
+    def create(self, validated_data):
+        last = Product.objects.order_by("-product_id").values_list("product_id", flat=True).first()
+        next_id = (last or 0) + 1
+        validated_data["product_id"] = next_id
+        validated_data["is_approved"] = False
+        return Product.objects.create(**validated_data)
+
+
+class ProductApproveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["is_approved"]
 
 
 class ComboSerializer(serializers.ModelSerializer):

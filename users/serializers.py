@@ -125,8 +125,8 @@ class ResetPasswordSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "name", "email", "mobile", "date_joined"]
-        read_only_fields = ["id", "date_joined"]
+        fields = ["id", "name", "email", "mobile", "date_joined", "is_staff", "is_superuser"]
+        read_only_fields = ["id", "date_joined", "is_staff", "is_superuser"]
 
     def validate_email(self, value):
         if User.objects.exclude(pk=self.instance.pk).filter(email=value).exists():
