@@ -6,12 +6,13 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Cart, Order, OrderItem, Wishlist
+from .models import Cart, Order, OrderItem, Prescription, Wishlist
 from .serializers import (
     CartAddSerializer, CartSerializer, CartUpdateSerializer,
     ChangePasswordSerializer, ForgotPasswordSerializer,
     LoginSerializer, LogoutSerializer,
     OrderCreateSerializer, OrderSerializer,
+    PrescriptionSerializer, PrescriptionUploadSerializer,
     ProfileSerializer, ResetPasswordSerializer,
     SignupSerializer, WishlistAddSerializer, WishlistSerializer,
 )
@@ -116,6 +117,56 @@ class ChangePasswordView(APIView):
             request.user.save(update_fields=["password"])
             return Response({"message": "Password changed successfully. Please login again."})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PrescriptionUploadView(APIView):
+    def post(self, request):
+        upload_serializer = PrescriptionUploadSerializer(data=request.data)
+        if not upload_serializer.is_valid():
+            return Response(upload_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user if request.user.is_authenticated else None
+        tokens = None
+
+        if user is None:
+            signup_serializer = SignupSerializer(data=request.data)
+            if not signup_serializer.is_valid():
+                return Response(
+                    {
+                        "error": "Authentication required. Provide valid signup details to continue.",
+                        "signup_errors": signup_serializer.errors,
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user = signup_serializer.save()
+            refresh = RefreshToken.for_user(user)
+            tokens = {"refresh": str(refresh), "access": str(refresh.access_token)}
+
+        prescription = Prescription.objects.create(
+            user=user,
+            prescription_file=upload_serializer.validated_data["prescription_file"],
+        )
+
+        response_data = {
+            "message": "Prescription uploaded successfully.",
+            "prescription": PrescriptionSerializer(prescription).data,
+        }
+
+        if tokens:
+            response_data.update(
+                {
+                    "auth_message": "Account created and authenticated successfully.",
+                    "user": {
+                        "id": user.id,
+                        "name": user.name,
+                        "email": user.email,
+                        "mobile": user.mobile,
+                    },
+                    "tokens": tokens,
+                }
+            )
+
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 
 # ── Cart ──────────────────────────────────────────────────────────────────────

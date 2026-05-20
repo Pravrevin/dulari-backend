@@ -4,6 +4,10 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 
 
+def prescription_upload_to(instance, filename):
+    return f"prescriptions/user_{instance.user_id}/{filename}"
+
+
 class UserManager(BaseUserManager):
     def create_user(self, email=None, mobile=None, password=None, **extra_fields):
         if not email and not mobile:
@@ -104,3 +108,16 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product} x{self.quantity} @ ₹{self.price}"
+
+
+class Prescription(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="prescriptions")
+    prescription_file = models.FileField(upload_to=prescription_upload_to)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "users_prescription"
+        ordering = ["-uploaded_at"]
+
+    def __str__(self):
+        return f"Prescription #{self.id} by {self.user}"

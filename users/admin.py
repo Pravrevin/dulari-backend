@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import Cart, Order, OrderItem, User, Wishlist
+from .models import Cart, Order, OrderItem, Prescription, User, Wishlist
 
 
 @admin.register(User)
@@ -63,3 +63,12 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_display = ["id", "order", "product", "quantity", "price"]
     search_fields = ["order__id", "product__product_name"]
     raw_id_fields = ["order", "product"]
+
+
+@admin.register(Prescription)
+class PrescriptionAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "prescription_file", "uploaded_at"]
+    list_filter = ["uploaded_at"]
+    search_fields = ["user__email", "user__mobile", "user__name"]
+    ordering = ["-uploaded_at"]
+    raw_id_fields = ["user"]

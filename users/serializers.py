@@ -1,5 +1,6 @@
 import re
 import secrets
+from decimal import Decimal
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
@@ -8,7 +9,7 @@ from products.models import Product
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Cart, Order, OrderItem, Wishlist
+from .models import Cart, Order, OrderItem, Prescription, Wishlist
 
 User = get_user_model()
 
@@ -38,6 +39,17 @@ class SignupSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class PrescriptionUploadSerializer(serializers.Serializer):
+    prescription_file = serializers.FileField()
+
+
+class PrescriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prescription
+        fields = ["id", "user", "prescription_file", "uploaded_at"]
+        read_only_fields = ["id", "user", "uploaded_at"]
 
 
 class LoginSerializer(serializers.Serializer):
@@ -248,6 +260,9 @@ class OrderCreateSerializer(serializers.Serializer):
                 for ci in cart_items
             ]
 
+        subtotal = sum(i["price"] * i["quantity"] for i in items)
+        delivery_charge = Decimal("0.00") if subtotal >= Decimal("750.00") else Decimal("51.00")
+
         attrs["items"] = items
-        attrs["total_amount"] = sum(i["price"] * i["quantity"] for i in items)
+        attrs["total_amount"] = subtotal + delivery_charge
         return attrs

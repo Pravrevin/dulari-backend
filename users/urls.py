@@ -7,6 +7,7 @@ from .views import (
     ForgotPasswordView,
     LoginView, LogoutView,
     OrderDetailView, OrderView,
+    PrescriptionUploadView,
     ProfileView,
     ResetPasswordView,
     SignupView,
@@ -21,6 +22,7 @@ urlpatterns = [
     path("token/refresh/",    TokenRefreshView.as_view(),   name="token_refresh"),
     path("forgot-password/",  ForgotPasswordView.as_view(), name="forgot_password"),
     path("reset-password/",   ResetPasswordView.as_view(),  name="reset_password"),
+    path("prescriptions/upload/", PrescriptionUploadView.as_view(), name="upload_prescription"),
 
     # ── Profile ────────────────────────────────────────────────────────────────
     path("profile/",                  ProfileView.as_view(),        name="profile"),
